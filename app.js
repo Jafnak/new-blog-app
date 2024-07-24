@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
 const {registermodel} = require("./models/register")
+const postModel = require("./models/posts")
 
 const app = express()
 app.use(express.json())
@@ -12,6 +13,24 @@ app.use(cors())
 
 
 mongoose.connect("mongodb+srv://Jafna02:jafna9074@cluster0.icijy.mongodb.net/bloggDb?retryWrites=true&w=majority&appName=Cluster0")
+
+//create post
+
+app.post("/create",async(req,res)=>{
+    let input=req.body
+    let token= req.headers.token
+    jwt.verify(token,"blogg-app",async(error,decoded)=>{
+        if (decoded && decoded.email) {
+            
+            let result=new postModel(input)
+            await result.save()
+            res.json({"status":"success"})
+
+        } else {
+            res.json({"status":"Invalid Authentication"})
+        }
+    })
+})
 
 const generateHashedPassword = async(password) =>{
     const salt = await bcrypt.genSalt(10)  //salt=cost factor value
