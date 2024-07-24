@@ -32,6 +32,27 @@ app.post("/create",async(req,res)=>{
     })
 })
 
+//viewall post
+app.post("/viewall",(req,res)=>{
+    let token=req.headers.token
+    jwt.verify(token,"blogg-app",(error,decoded)=>{
+        if (decoded && decoded.email) {
+            postModel.find().then(
+                (items)=>{
+                    res.json(items)
+                }
+            ).catch(
+                (error)=>{
+                    res.json({"status":"error"})
+                }
+            )
+        } else {
+            
+        }
+    })
+})
+
+
 const generateHashedPassword = async(password) =>{
     const salt = await bcrypt.genSalt(10)  //salt=cost factor value
     return bcrypt.hash(password,salt)
